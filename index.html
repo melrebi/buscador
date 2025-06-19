@@ -153,7 +153,10 @@
       document.getElementById('results').innerHTML = '<p class="message">Buscando...</p>';
 
       fetch(`${WEB_APP_URL}?query=${encodeURIComponent(query)}&type=${searchType}`)
-        .then(resp => resp.json())
+        .then(resp => {
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          return resp.json();
+        })
         .then(result => displayResult(result))
         .catch(err => displayError({ message: err.message }));
     }
@@ -171,8 +174,8 @@
         const html = [];
 
         html.push(`<h2>Hoja: ${res.sheet}</h2>`);
-
         html.push('<div class="result-section section-primary"><h3>Información Principal</h3><div class="data-grid">');
+
         const primaryFields = Math.min(5, res.headers.length);
         for (let i = 0; i < primaryFields; i++) {
           html.push(`<div class="data-label">${res.headers[i]}:</div><div class="data-value">${res.row[i] || ''}</div>`);
