@@ -48,22 +48,6 @@
     button:hover {
       background-color: #2980b9;
     }
-    .search-type {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 10px;
-      width: 100%;
-    }
-    .search-type label {
-      margin-right: 15px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-    }
-    .search-type input[type="radio"] {
-      margin-right: 5px;
-    }
     .results-area {
       background-color: white;
       border-radius: 8px;
@@ -121,21 +105,17 @@
   </style>
 </head>
 <body>
-  <h1>Buscador de Catastro</h1>
+  <h1>Buscador de Catastro (por Expediente)</h1>
 
   <div class="search-container">
-    <div class="search-type">
-      <label><input type="radio" name="searchType" value="EXPEDIENTE" checked> Buscar por Expediente</label>
-      <label><input type="radio" name="searchType" value="NOMBRE"> Buscar por Nombre</label>
-    </div>
     <div class="search-group">
-      <input type="text" id="searchInput" placeholder="Ingrese su búsqueda" onkeypress="if(event.key === 'Enter') performSearch()">
+      <input type="text" id="searchInput" placeholder="Ingrese el número de expediente" onkeypress="if(event.key === 'Enter') performSearch()">
       <button onclick="performSearch()">Buscar</button>
     </div>
   </div>
 
   <div class="results-area" id="results">
-    <p class="message">Ingrese su búsqueda y haz clic en "Buscar".</p>
+    <p class="message">Ingrese el número de expediente y haz clic en "Buscar".</p>
   </div>
 
   <script>
@@ -143,10 +123,10 @@
 
     function performSearch() {
       const query = document.getElementById('searchInput').value.trim();
-      const searchType = document.querySelector('input[name="searchType"]:checked').value;
+      const searchType = 'EXPEDIENTE'; // fijo
 
       if (!query) {
-        document.getElementById('results').innerHTML = '<p class="message">Por favor, ingresa un texto para buscar.</p>';
+        document.getElementById('results').innerHTML = '<p class="message">Por favor, ingrese un número de expediente.</p>';
         return;
       }
 
