@@ -1,61 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Buscador de Expedientes</title>
-<style>
-  body { font-family: Arial, sans-serif; padding: 20px; }
-  input, button { padding: 8px; margin: 5px; }
-  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador de Catastro</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<h2>Buscar Expediente</h2>
-<input type="text" id="expediente" placeholder="Ingrese expediente">
-<button onclick="buscar()">Buscar</button>
-
-<div id="resultados"></div>
-
-<script>
-function buscar() {
-  let expediente = document.getElementById("expediente").value.trim();
-  if (!expediente) {
-    alert("Por favor ingrese un expediente.");
-    return;
-  }
-
-  fetch(`https://script.google.com/macros/s/AKfycbytcfgYivgEDt0Hv34XfrM8r2Bkr3Lqu7Ycph3O-PTrKtfd2bpSpFOoQL-UbvVD0vFknw/exec?expediente=${encodeURIComponent(expediente)}`)
-    .then(res => res.json())
-    .then(data => {
-      let html = "";
-      if (data.length === 0) {
-        html = "<p>No se encontraron resultados.</p>";
-      } else {
-        html = "<table><thead><tr>";
-        for (let i = 0; i < data[0].length; i++) {
-          html += `<th>Col ${i+1}</th>`;
-        }
-        html += "</tr></thead><tbody>";
-        data.forEach(row => {
-          html += "<tr>";
-          row.forEach(cell => {
-            html += `<td>${cell}</td>`;
-          });
-          html += "</tr>";
-        });
-        html += "</tbody></table>";
-      }
-      document.getElementById("resultados").innerHTML = html;
-    })
-    .catch(err => {
-      console.error("Error:", err);
-      alert("Ocurrió un error en la búsqueda.");
-    });
-}
-</script>
-
+  <h1>Buscador de Catastro</h1>
+  <div class="search-container">
+    <input type="text" id="expedienteInput" placeholder="Buscar por expediente...">
+    <button onclick="buscar()">Buscar</button>
+  </div>
+  <div id="resultados"></div>
+  <script src="script.js"></script>
 </body>
 </html>
