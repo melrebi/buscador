@@ -1,191 +1,61 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Buscador de Catastro</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f5f5f5;
-    }
-    h1 {
-      color: #2c3e50;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .search-container {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .search-group {
-      display: flex;
-      flex: 1;
-      max-width: 500px;
-    }
-    #searchInput {
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px 0 0 4px;
-      width: 100%;
-      font-size: 16px;
-    }
-    button {
-      background-color: #3498db;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      cursor: pointer;
-      border-radius: 0 4px 4px 0;
-      font-size: 16px;
-      transition: background-color 0.3s;
-    }
-    button:hover {
-      background-color: #2980b9;
-    }
-    .results-area {
-      background-color: white;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    .message {
-      text-align: center;
-      color: #7f8c8d;
-    }
-    .error {
-      color: #e74c3c;
-      text-align: center;
-    }
-    .result-section {
-      margin-bottom: 20px;
-      padding: 15px;
-      border-radius: 8px;
-    }
-    .section-primary {
-      background-color: #e8f4fc;
-      border-left: 5px solid #3498db;
-    }
-    .section-secondary {
-      background-color: #f0f9ec;
-      border-left: 5px solid #2ecc71;
-    }
-    .section-tertiary {
-      background-color: #fef5e7;
-      border-left: 5px solid #f39c12;
-    }
-    h2 {
-      color: #2c3e50;
-      margin-top: 0;
-      font-size: 20px;
-    }
-    h3 {
-      color: #34495e;
-      font-size: 16px;
-      margin: 10px 0;
-    }
-    .data-grid {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 8px;
-      align-items: center;
-    }
-    .data-label {
-      font-weight: bold;
-      color: #34495e;
-    }
-    .data-value {
-      color: #555;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buscador de Expedientes</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  input, button { padding: 8px; margin: 5px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+</style>
 </head>
 <body>
-  <h1>Buscador de Catastro (por Expediente)</h1>
 
-  <div class="search-container">
-    <div class="search-group">
-      <input type="text" id="searchInput" placeholder="Ingrese el número de expediente" onkeypress="if(event.key === 'Enter') performSearch()">
-      <button onclick="performSearch()">Buscar</button>
-    </div>
-  </div>
+<h2>Buscar Expediente</h2>
+<input type="text" id="expediente" placeholder="Ingrese expediente">
+<button onclick="buscar()">Buscar</button>
 
-  <div class="results-area" id="results">
-    <p class="message">Ingrese el número de expediente y haz clic en "Buscar".</p>
-  </div>
+<div id="resultados"></div>
 
-  <script>
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbytcfgYivgEDt0Hv34XfrM8r2Bkr3Lqu7Ycph3O-PTrKtfd2bpSpFOoQL-UbvVD0vFknw/exec';
+<script>
+function buscar() {
+  let expediente = document.getElementById("expediente").value.trim();
+  if (!expediente) {
+    alert("Por favor ingrese un expediente.");
+    return;
+  }
 
-    function performSearch() {
-      const query = document.getElementById('searchInput').value.trim();
-      const searchType = 'EXPEDIENTE'; // fijo
-
-      if (!query) {
-        document.getElementById('results').innerHTML = '<p class="message">Por favor, ingrese un número de expediente.</p>';
-        return;
+  fetch(`https://script.google.com/macros/s/AKfycbytcfgYivgEDt0Hv34XfrM8r2Bkr3Lqu7Ycph3O-PTrKtfd2bpSpFOoQL-UbvVD0vFknw/exec?expediente=${encodeURIComponent(expediente)}`)
+    .then(res => res.json())
+    .then(data => {
+      let html = "";
+      if (data.length === 0) {
+        html = "<p>No se encontraron resultados.</p>";
+      } else {
+        html = "<table><thead><tr>";
+        for (let i = 0; i < data[0].length; i++) {
+          html += `<th>Col ${i+1}</th>`;
+        }
+        html += "</tr></thead><tbody>";
+        data.forEach(row => {
+          html += "<tr>";
+          row.forEach(cell => {
+            html += `<td>${cell}</td>`;
+          });
+          html += "</tr>";
+        });
+        html += "</tbody></table>";
       }
+      document.getElementById("resultados").innerHTML = html;
+    })
+    .catch(err => {
+      console.error("Error:", err);
+      alert("Ocurrió un error en la búsqueda.");
+    });
+}
+</script>
 
-      document.getElementById('results').innerHTML = '<p class="message">Buscando...</p>';
-
-      fetch(`${WEB_APP_URL}?query=${encodeURIComponent(query)}&type=${searchType}`)
-        .then(resp => {
-          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-          return resp.json();
-        })
-        .then(result => displayResult(result))
-        .catch(err => displayError({ message: err.message }));
-    }
-
-    function displayResult(result) {
-      const div = document.getElementById('results');
-      div.innerHTML = '';
-
-      if (result.error || result.message) {
-        div.innerHTML = `<p class="${result.error ? 'error' : 'message'}">${result.error || result.message}</p>`;
-        return;
-      }
-
-      result.results.forEach(res => {
-        const html = [];
-
-        html.push(`<h2>Hoja: ${res.sheet}</h2>`);
-        html.push('<div class="result-section section-primary"><h3>Información Principal</h3><div class="data-grid">');
-
-        const primaryFields = Math.min(5, res.headers.length);
-        for (let i = 0; i < primaryFields; i++) {
-          html.push(`<div class="data-label">${res.headers[i]}:</div><div class="data-value">${res.row[i] || ''}</div>`);
-        }
-        html.push('</div></div>');
-
-        if (res.headers.length > 5) {
-          html.push('<div class="result-section section-secondary"><h3>Información Detallada</h3><div class="data-grid">');
-          const secondaryLimit = Math.min(20, res.headers.length);
-          for (let i = 5; i < secondaryLimit; i++) {
-            html.push(`<div class="data-label">${res.headers[i]}:</div><div class="data-value">${res.row[i] || ''}</div>`);
-          }
-          html.push('</div></div>');
-        }
-
-        if (res.headers.length > 20) {
-          html.push('<div class="result-section section-tertiary"><h3>Información Adicional</h3><div class="data-grid">');
-          for (let i = 20; i < res.headers.length; i++) {
-            html.push(`<div class="data-label">${res.headers[i]}:</div><div class="data-value">${res.row[i] || ''}</div>`);
-          }
-          html.push('</div></div>');
-        }
-
-        div.innerHTML += html.join('');
-      });
-    }
-
-    function displayError(err) {
-      document.getElementById('results').innerHTML = `<p class="error">Ocurrió un error al buscar: ${err.message}</p>`;
-    }
-  </script>
 </body>
 </html>
