@@ -140,6 +140,7 @@
     }
   </style>
 </head>
+</head>
 <body>
   <h1>Buscador de Catastro</h1>
   
@@ -155,11 +156,10 @@
   </div>
   
   <script>
-    const WEB_APP_URL = '<?= ScriptApp.getService().getUrl() ?>';
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbytcfgYivgEDt0Hv34XfrM8r2Bkr3Lqu7Ycph3O-PTrKtfd2bpSpFOoQL-UbvVD0vFknw/exec';
 
     function performSearch() {
       const query = document.getElementById('searchInput').value.trim();
-      const searchType = document.querySelector('input[name="searchType"]:checked').value;
       
       if (!query) {
         document.getElementById('results').innerHTML = '<p class="message">Por favor, ingresa un texto para buscar.</p>';
@@ -168,7 +168,7 @@
       
       document.getElementById('results').innerHTML = '<p class="message">Buscando...</p>';
       
-      fetch(`${WEB_APP_URL}?query=${encodeURIComponent(query)}&type=${searchType}`)
+      fetch(`${WEB_APP_URL}?query=${encodeURIComponent(query)}`)
         .then(resp => { if (!resp.ok) throw new Error('HTTP ' + resp.status); return resp.json(); })
         .then(result => displayResult(result))
         .catch(err => displayError({ message: err }));
@@ -188,7 +188,6 @@
         
         html.push(`<h2>Hoja: ${res.sheet}</h2>`);
         
-        // Primer segmento: 5 primeras columnas
         html.push('<div class="result-section section-primary">');
         html.push('<h3>Información Principal</h3>');
         html.push('<div class="data-grid">');
@@ -202,7 +201,6 @@
         }
         html.push('</div></div>');
         
-        // Segundo segmento: siguientes 15 columnas
         if (res.headers.length > 5) {
           html.push('<div class="result-section section-secondary">');
           html.push('<h3>Información Detallada</h3>');
@@ -218,7 +216,6 @@
           html.push('</div></div>');
         }
         
-        // Tercer segmento: columnas restantes
         if (res.headers.length > 20) {
           html.push('<div class="result-section section-tertiary">');
           html.push('<h3>Información Adicional</h3>');
@@ -243,3 +240,4 @@
   </script>
 </body>
 </html>
+
